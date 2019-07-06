@@ -1,4 +1,7 @@
-Small project on producing changes given certain set of bills with different bill types.
+# HelloChange
+
+
+Small project on producing changes given certain set of bills with different bill types
  
 Command line argument format as "java HelloChange ($20 bills) ($10 bills) ($5 bills) ($2 bills) ($1 bills)" to initialize the start up amount of changes that the change machine has from the beginning.
 
