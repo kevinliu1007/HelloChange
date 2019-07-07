@@ -49,8 +49,9 @@ public class ChangeTest {
     @Test
     public void putEdgeCaseTest() {
         change.putAndTake(new String[]{"put", "1", "2", "3", "4", "a"}, true);
+        change.putAndTake(new String[]{"put", "1", "2", "3", "4", "-4"}, true);
 
-        assertEquals("Please enter a number!\r\n", outContent.toString());
+        assertEquals("Please enter a number!\r\nPlease enter a number!\r\n", outContent.toString());
     }
 
     @Test
@@ -63,10 +64,11 @@ public class ChangeTest {
     @Test
     public void takeEdgeCaseTest() {
         change.putAndTake(new String[]{"put", "1", "2", "3", "4", "a"}, false);
-        change.putAndTake(new String[]{"put", "1", "2", "3", "4", "6"}, false);
+        change.putAndTake(new String[]{"put", "2", "0", "0", "0", "0"}, false);
+        change.putAndTake(new String[]{"put", "0", "0", "0", "0", "-1"}, false);
 
-        assertEquals("Please enter a number!\r\nCannot withdraw more than 5 $1 bills, removed 5 bills" +
-                " insread.\r\n$0 0 0 0 0 0\r\n", outContent.toString());
+        assertEquals("Please enter a number!\r\nCannot withdraw more than 1 $20 bills, removed 1 bills" +
+                " instead.\r\n$48 0 2 3 4 5\r\nPlease enter a number!\r\n", outContent.toString());
     }
 
     @Test
@@ -83,7 +85,8 @@ public class ChangeTest {
         change.makeChange(80);
         change = new Change(new String[]{"1", "1", "1", "1", "1"});
         change.makeChange(9);
+        change.makeChange(-11);
 
-        assertEquals("sorry\r\nsorry\r\n", outContent.toString());
+        assertEquals("sorry\r\nsorry\r\nAmount cannot be negative!\r\n", outContent.toString());
     }
 }

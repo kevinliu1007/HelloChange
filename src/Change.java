@@ -81,22 +81,30 @@ public class Change {
             }
         }
 
-        int[] values = new int[6];
+        int[] values = new int[billType.size()+1];
 
-        for (int i = 1; i < 6; ++i) {
+        for (int i = 1; i < billType.size() + 1; ++i) {
             try {
                 values[i] = Integer.valueOf(params[i]);
+
+                if (add && values[i] < 0) {
+                    System.out.println(WRONG_INPUT_MESSAGE);
+                    return;
+                } else if (!add && values[i] > 0) {
+                    System.out.println(WRONG_INPUT_MESSAGE);
+                    return;
+                }
             } catch (NumberFormatException e) {
                 System.out.println(WRONG_INPUT_MESSAGE);
                 return;
             }
         }
 
-        for (int i = 1; i < 6; ++i) {
+        for (int i = 1; i < billType.size() + 1; ++i) {
             int bill = billType.get(i);
 
             if (changes.get(bill) + values[i] < 0) {
-                System.out.printf("Cannot withdraw more than %d $%d bills, removed %d bills insread.%n",
+                System.out.printf("Cannot withdraw more than %d $%d bills, removed %d bills instead.%n",
                         changes.get(bill), bill, changes.get(bill));
                 values[i] = -1 * changes.get(bill);
             }
@@ -117,6 +125,11 @@ public class Change {
     public void makeChange(int amount) {
         if (amount > total) {
             System.out.println(SORRY_MESSAGE);
+            return;
+        }
+
+        if (amount < 0) {
+            System.out.println("Amount cannot be negative!");
             return;
         }
 
@@ -143,7 +156,7 @@ public class Change {
      * @param params - String array of the number values that want to be negated
      */
     private void negateValues(String[] params) {
-        for (int i = 1; i < 6; ++i) {
+        for (int i = 1; i < billType.size() + 1; ++i) {
             int negative;
             try {
                 negative = -1 * Integer.valueOf(params[i]);
@@ -164,24 +177,24 @@ public class Change {
      * @return String of each type of the dollar bill returned as change
      */
     private String calculateChange(int amount, ArrayList<ArrayList<ArrayList<Integer>>> bills) {
-        for (int i = 0; i <= billType.size() ; ++i) {
-            for (int j = 0; j <= amount; ++j) {
-                if (i == 0) {
+        for (int currentBillType = 0; currentBillType <= billType.size() ; ++currentBillType) {
+            for (int currentAmount = 0; currentAmount <= amount; ++currentAmount) {
+                if (currentBillType == 0) {
                     // Initialize memoization with empty ArrayLists with size of the amount of change
                     ArrayList<ArrayList<Integer>> option = new ArrayList<>();
                     bills.add(option);
-                } else if (j > 0) {
-                    int bill = billType.get(billType.size()+1-i);
+                } else if (currentAmount > 0) {
+                    int bill = billType.get(billType.size()+1-currentBillType);
 
-                    if (j == bill) {
+                    if (currentAmount == bill) {
                         // Case when current amount is the same of the bill
-                        matchBill(i, j, bills);
-                    } else if (j > bill) {
+                        matchBill(currentBillType, currentAmount, bills);
+                    } else if (currentAmount > bill) {
                         // Case when the current amount is bigger than the bill
-                        amountBiggerThanBill(i, j, bill, bills);
+                        amountBiggerThanBill(currentBillType, currentAmount, bill, bills);
                     } else {
                         // Case when the current amount is smaller than the bill
-                        for (ArrayList<Integer> l : bills.get(j)) {
+                        for (ArrayList<Integer> l : bills.get(currentAmount)) {
                             if (l.size() > 0) {
                                 l.add(0, 0);
                             }
@@ -200,10 +213,10 @@ public class Change {
      * of the current amount given by j.
      *
      * @param i - bill type index
-     * @param j - dollar amount index
+     * @param currentAmount - dollar amount index
      * @param bills - memoization array
      */
-    private void matchBill(int i, int j, ArrayList<ArrayList<ArrayList<Integer>>> bills) {
+    private void matchBill(int i, int currentAmount, ArrayList<ArrayList<ArrayList<Integer>>> bills) {
         ArrayList<Integer> newOption = new ArrayList<>();
 
         // Populate new ArrayList
@@ -215,7 +228,7 @@ public class Change {
             }
         }
 
-        bills.get(j).add(newOption);
+        bills.get(currentAmount).add(newOption);
     }
 
     /**
@@ -223,16 +236,17 @@ public class Change {
      * add 1 more bill into the change combo for current amount, given the combination that made up the previous
      * combo of (amount - bill).
      *
-     * @param i - bill type index
-     * @param j - dollar amount index
+     * @param currentBillType - bill type index
+     * @param currentAmount - dollar amount index
      * @param bill - current bill type
      * @param bills - memoization array
      */
-    private void amountBiggerThanBill(int i, int j, int bill, ArrayList<ArrayList<ArrayList<Integer>>> bills) {
-        int diff = j - bill;
+    private void amountBiggerThanBill(int currentBillType, int currentAmount, int bill,
+                                      ArrayList<ArrayList<ArrayList<Integer>>> bills) {
+        int diff = currentAmount - bill;
 
         // Add 0 to previous combo that does not use the current bill type
-        for (ArrayList<Integer> l : bills.get(j)) {
+        for (ArrayList<Integer> l : bills.get(currentAmount)) {
             if (l.size() > 0) {
                 l.add(0, 0);
             }
@@ -243,11 +257,11 @@ public class Change {
             for (ArrayList<Integer> l : bills.get(diff)) {
                 ArrayList<Integer> newOption = new ArrayList<>();
 
-                if (l.size() < i) {
+                if (l.size() < currentBillType) {
                     // If previous combo does not use the current bill type
                     newOption.add(1);
                     newOption.addAll(l);
-                } else if (l.size() == i && l.get(0) + 1 <= changes.get(bill)) {
+                } else if (l.size() == currentBillType && l.get(0) + 1 <= changes.get(bill)) {
                     // If the previous combo uses the current bill type
                     newOption.add(1 + l.get(0));
 
@@ -259,7 +273,7 @@ public class Change {
                     continue;
                 }
 
-                bills.get(j).add(newOption);
+                bills.get(currentAmount).add(newOption);
             }
         }
     }
@@ -280,7 +294,7 @@ public class Change {
             // Current implementation is to utilize the minimal amount of bill to be
             // removed from the machine to maintain most use out of the machine. Can
             // be changed to maximize the amount of bill given out to increase user
-            // experience for better changes.
+            // experience for better change.
             for (int i = 0; i < bills.get(amount).size(); ++i) {
                 int sum = 0;
 
@@ -293,7 +307,7 @@ public class Change {
                 }
             }
 
-            return removeChangesAndGetString(bills.get(amount).get(index));
+            return removeChangeAndGetString(bills.get(amount).get(index));
         } else {
             return SORRY_MESSAGE;
         }
@@ -306,7 +320,7 @@ public class Change {
      *
      * @return String of each type of the dollar bill returned as change
      */
-    private String removeChangesAndGetString(ArrayList<Integer> list) {
+    private String removeChangeAndGetString(ArrayList<Integer> list) {
         StringBuilder result = new StringBuilder();
 
         for (int i = 0; i < list.size(); ++i) {
