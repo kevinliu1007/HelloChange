@@ -1,3 +1,5 @@
+package com.rocketmiles.hellochange;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -38,7 +40,7 @@ public class Change {
     /**
      * Class constructor, takes in list of string of initial dollar bills in the change machine.
      *
-     * @param args - array of strings that contains the inital dollar bills amount
+     * @param args array of strings that contains the inital dollar bills amount
      */
     public Change(String[] args) {
         this.setup();
@@ -69,8 +71,8 @@ public class Change {
      * Main logic for "put" and "take" function. Given the user entered parameters for the amount user wants to add
      * into the change machine. Additional parameter of add to identify we are executing "put" or "take".
      *
-     * @param params - array of strings that contains the dollar bills amount to put/take from the change machine
-     * @param add - boolean variable that determine either executing put or take operation
+     * @param params array of strings that contains the dollar bills amount to put/take from the change machine
+     * @param add boolean variable that determine either executing put or take operation
      */
     public void putAndTake(String[] params, boolean add) {
         if (!add) {
@@ -120,7 +122,7 @@ public class Change {
      * Main logic for "change" function. Given the required change amount, function creates temporary memoization
      * array and execute calculateChange function to calculate the change required and return as String.
      *
-     * @param amount - integer value of the required change amount
+     * @param amount integer value of the required change amount
      */
     public void makeChange(int amount) {
         if (amount > total) {
@@ -153,7 +155,7 @@ public class Change {
     /**
      * Utility funciton to negate all values of numbers in String format in a given array.
      *
-     * @param params - String array of the number values that want to be negated
+     * @param params String array of the number values that want to be negated
      */
     private void negateValues(String[] params) {
         for (int i = 1; i < billType.size() + 1; ++i) {
@@ -171,8 +173,8 @@ public class Change {
     /**
      * Logic to execute dynamic programming solution to find out how to grant changes given a dollar amount.
      *
-     * @param amount - integer value of the required change amount
-     * @param bills - array of the temporary memoization array
+     * @param amount integer value of the required change amount
+     * @param bills array of the temporary memoization array
      *
      * @return String of each type of the dollar bill returned as change
      */
@@ -212,9 +214,9 @@ public class Change {
      * new array with 1 type of the current bill and 0 types of the other bill onto the memoization array at index
      * of the current amount given by j.
      *
-     * @param i - bill type index
-     * @param currentAmount - dollar amount index
-     * @param bills - memoization array
+     * @param i bill type index
+     * @param currentAmount dollar amount index
+     * @param bills memoization array
      */
     private void matchBill(int i, int currentAmount, ArrayList<ArrayList<ArrayList<Integer>>> bills) {
         ArrayList<Integer> newOption = new ArrayList<>();
@@ -236,10 +238,10 @@ public class Change {
      * add 1 more bill into the change combo for current amount, given the combination that made up the previous
      * combo of (amount - bill).
      *
-     * @param currentBillType - bill type index
-     * @param currentAmount - dollar amount index
-     * @param bill - current bill type
-     * @param bills - memoization array
+     * @param currentBillType bill type index
+     * @param currentAmount dollar amount index
+     * @param bill current bill type
+     * @param bills memoization array
      */
     private void amountBiggerThanBill(int currentBillType, int currentAmount, int bill,
                                       ArrayList<ArrayList<ArrayList<Integer>>> bills) {
@@ -281,8 +283,8 @@ public class Change {
     /**
      * Function to format the result string given the current combos that satisfy the change requirement.
      *
-     * @param amount - required change amount
-     * @param bills - memoization array
+     * @param amount required change amount
+     * @param bills memoization array
      *
      * @return String of each type of the dollar bill returned as change
      */
@@ -316,7 +318,7 @@ public class Change {
     /**
      * Function to remove the changes from the state of the machine and format the return string.
      *
-     * @param list - list of the change combo given back to the user
+     * @param list list of the change combo given back to the user
      *
      * @return String of each type of the dollar bill returned as change
      */

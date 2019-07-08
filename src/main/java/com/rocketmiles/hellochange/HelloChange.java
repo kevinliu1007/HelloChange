@@ -1,3 +1,5 @@
+package com.rocketmiles.hellochange;
+
 import java.util.Scanner;
 
 /**
